@@ -20,5 +20,17 @@ import torch.autograd as autograd
 from torch.autograd import Variable  #to convert tensors into variables and gradients
 
 
+#AIM_1 -> To create neural network 
+ #Our Neural-Network class will have 2 functions :
 
+
+class Network(nn.Module):
+    
+    def __init__(self, input_size, nb_action):
+        super(Network, self).__init__()       #trick to inherit all the properties of "nn.Module" in single shot
+        self.input_size = input_size          #self.input_size is just a way to attact a variable to the input layer of neuralN. 
+        #Note : above line signifies no. of input neuron = input size (in this case i.e 5)
+        self.nb_action = nb_action            #same as above case but in o/p neurons
+        self.fc1 = nn.Linear(input_size, 30)  #full connection b/w i/p and hidden layer
+        self.fc2 = nn.Linear(30, nb_action)   #full connection b/w hidden and o/p layer
         
