@@ -70,6 +70,7 @@ class ReplayMemory(object):
    #Deep_q_Net class will have 5 functions() :
    #1. init func()           - to declare variables and define class structure
    #2. select_action func()  - to selct which action to perform next
+   #3. learn func()          - to backpropagate errors and update the weights
 
 class Dqn():
     
@@ -87,3 +88,12 @@ class Dqn():
         probs = F.softmax(self.model(Variable(state, volatile = True))*100) #Temp-Parameter=100
         action = probs.multinomial()                                        #to have a rondom_draw over the above probability distribution
         return action.data[0,0]
+    
+    def learn(self, batch_state, batch_next_state, batch_reward, batch_action):
+        outputs = self.model(batch_state).gather(1, batch_action.unsqueeze(1)).squeeze(1)
+        next_outputs = self.model(batch_next_state).detach().max(1)[0]
+        target = self.gamma*next_outputs + batch_reward
+        td_loss = F.smooth_l1_loss(outputs, target)                         #HUBER_LOSS (i.e smooth_ll_loss) recommended in deepL
+        self.optimizer.zero_grad()                                          #this will re-initialize the optimizer
+        td_loss.backward(retain_variables = True)                           #this will backpropagate the loss
+        self.optimizer.step()                                               #this will update the weights
