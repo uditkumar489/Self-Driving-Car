@@ -101,3 +101,72 @@ class Ball2(Widget):
     pass
 class Ball3(Widget):
     pass
+
+# Creating the game class
+
+class Game(Widget):
+
+    car = ObjectProperty(None)
+    ball1 = ObjectProperty(None)
+    ball2 = ObjectProperty(None)
+    ball3 = ObjectProperty(None)
+
+    def serve_car(self):
+        self.car.center = self.center
+        self.car.velocity = Vector(6, 0)
+
+    def update(self, dt):
+
+        global brain
+        global last_reward
+        global scores
+        global last_distance
+        global goal_x
+        global goal_y
+        global longueur
+        global largeur
+
+        longueur = self.width
+        largeur = self.height
+        if first_update:
+            init()
+
+        xx = goal_x - self.car.x
+        yy = goal_y - self.car.y
+        orientation = Vector(*self.car.velocity).angle((xx,yy))/180.
+        last_signal = [self.car.signal1, self.car.signal2, self.car.signal3, orientation, -orientation]
+        action = brain.update(last_reward, last_signal)
+        scores.append(brain.score())
+        rotation = action2rotation[action]
+        self.car.move(rotation)
+        distance = np.sqrt((self.car.x - goal_x)**2 + (self.car.y - goal_y)**2)
+        self.ball1.pos = self.car.sensor1
+        self.ball2.pos = self.car.sensor2
+        self.ball3.pos = self.car.sensor3
+
+        if sand[int(self.car.x),int(self.car.y)] > 0:
+            self.car.velocity = Vector(1, 0).rotate(self.car.angle)
+            last_reward = -1
+        else: # otherwise
+            self.car.velocity = Vector(6, 0).rotate(self.car.angle)
+            last_reward = -0.2
+            if distance < last_distance:
+                last_reward = 0.1
+
+        if self.car.x < 10:
+            self.car.x = 10
+            last_reward = -1
+        if self.car.x > self.width - 10:
+            self.car.x = self.width - 10
+            last_reward = -1
+        if self.car.y < 10:
+            self.car.y = 10
+            last_reward = -1
+        if self.car.y > self.height - 10:
+            self.car.y = self.height - 10
+            last_reward = -1
+
+        if distance < 100:
+            goal_x = self.width-goal_x
+            goal_y = self.height-goal_y
+        last_distance = distance
