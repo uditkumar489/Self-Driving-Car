@@ -67,11 +67,12 @@ class ReplayMemory(object):
     
     
 #AIM_3 -> To Implement Deep Q Learning
-   #Deep_q_Net class will have 5 functions() :
+   #Deep_q_Net class will have 7 functions() :
    #1. init()           - to declare variables and define class structure
    #2. select_action()  - to selct which action to perform next
    #3. learn()          - to backpropagate errors and update the weights
    #4. update()         - to update everything as the AI reaches new state + return new action
+   #5. score()          - to calculate the mean of award window
 
 class Dqn():
     
@@ -114,3 +115,7 @@ class Dqn():
             del self.reward_window[0]
         return action                                                       #returning the new action performed
         
+    def score(self):
+        return sum(self.reward_window)/(len(self.reward_window)+1)         #+1 to avoid 'dividing by 0' 
+    
+    
