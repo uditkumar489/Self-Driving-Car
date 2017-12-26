@@ -68,16 +68,22 @@ class ReplayMemory(object):
     
 #AIM_3 -> To Implement Deep Q Learning
    #Deep_q_Net class will have 5 functions() :
-   #1. init func()       - to declare variables and define class structure
+   #1. init func()           - to declare variables and define class structure
+   #2. select_action func()  - to selct which action to perform next
 
 class Dqn():
     
-    def __init__(self, input_size, nb_action, gamma):                      #to apply stochastic gradient descent
+    def __init__(self, input_size, nb_action, gamma):                       #to apply stochastic gradient descent
         self.gamma = gamma
-        self.reward_window = []                                           #contains list of rewads for a time-interval
-        self.model = Network(input_size, nb_action)                        #making object of neural class
-        self.memory = ReplayMemory(100000)                                 #memory self-assumed
-        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001)   #creartin optimizer (ADAM in this case)
+        self.reward_window = []                                             #contains list of rewads for a time-interval
+        self.model = Network(input_size, nb_action)                         #making object of neural class
+        self.memory = ReplayMemory(100000)                                  #memory self-assumed
+        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001)    #creartin optimizer (ADAM in this case)
         self.last_state = torch.Tensor(input_size).unsqueeze(0)
-        self.last_action = 0                                               #action can have values 0,1,2 corrsp rotation
-        self.last_reward = 0                                               #reward can have values 0,+1,-1
+        self.last_action = 0                                                #action can have values 0,1,2 corrsp rotation
+        self.last_reward = 0                                                #reward can have values 0,+1,-1
+        
+    def select_action(self, state):
+        probs = F.softmax(self.model(Variable(state, volatile = True))*100) #Temp-Parameter=100
+        action = probs.multinomial()                                        #to have a rondom_draw over the above probability distribution
+        return action.data[0,0]
