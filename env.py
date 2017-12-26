@@ -5,7 +5,7 @@ Created on Tue Dec 26 13:43:21 2017
 @author: Udit
 """
 
-# Self Driving Car Environment and Graphics
+# Self Driving Car
 
 # Importing the libraries
 import numpy as np
@@ -52,7 +52,7 @@ def init():
     goal_x = 20
     goal_y = largeur - 20
     first_update = False
-    
+
 # Initializing the last distance
 last_distance = 0
 
@@ -170,7 +170,7 @@ class Game(Widget):
             goal_x = self.width-goal_x
             goal_y = self.height-goal_y
         last_distance = distance
-        
+
 # Adding the painting tools
 
 class MyPaintWidget(Widget):
@@ -200,7 +200,7 @@ class MyPaintWidget(Widget):
             sand[int(touch.x) - 10 : int(touch.x) + 10, int(touch.y) - 10 : int(touch.y) + 10] = 1
             last_x = x
             last_y = y
-            
+
 # Adding the API Buttons (clear, save and load)
 
 class CarApp(App):

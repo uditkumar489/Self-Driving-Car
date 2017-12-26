@@ -89,7 +89,7 @@ class Dqn():
         self.last_reward = 0                                                #reward can have values 0,+1,-1
         
     def select_action(self, state):
-        probs = F.softmax(self.model(Variable(state, volatile = True))*100) #Temp-Parameter=100
+        probs = F.softmax(self.model(Variable(state, volatile = True))*7) #Temp-Parameter=100
         action = probs.multinomial()                                        #to have a rondom_draw over the above probability distribution
         return action.data[0,0]
     
