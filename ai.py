@@ -71,7 +71,7 @@ class ReplayMemory(object):
    #1. init()           - to declare variables and define class structure
    #2. select_action()  - to selct which action to perform next
    #3. learn()          - to backpropagate errors and update the weights
-   #4. update()         - to update everything as the AI reaches new state
+   #4. update()         - to update everything as the AI reaches new state + return new action
 
 class Dqn():
     
@@ -102,4 +102,15 @@ class Dqn():
     def update(self, reward, new_signal):                                   #to update last & new state , last action and reward
         new_state = torch.Tensor(new_signal).float().unsqueeze(0)
         self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward])))
+        action = self.select_action(new_state)                             #performing new action
+        if len(self.memory.memory) > 100:
+            batch_state, batch_next_state, batch_action, batch_reward = self.memory.sample(100)
+            self.learn(batch_state, batch_next_state, batch_reward, batch_action)
+        self.last_action = action                                           #updating last action
+        self.last_state = new_state                                         #updating last state
+        self.last_reward = reward                                           ##updating last reward
+        self.reward_window.append(reward)
+        if len(self.reward_window) > 1000:
+            del self.reward_window[0]
+        return action                                                       #returning the new action performed
         
