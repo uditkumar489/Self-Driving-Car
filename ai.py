@@ -73,6 +73,7 @@ class ReplayMemory(object):
    #3. learn()          - to backpropagate errors and update the weights
    #4. update()         - to update everything as the AI reaches new state + return new action
    #5. score()          - to calculate the mean of award window
+   #6. save()           - to save the state of brain
 
 class Dqn():
     
@@ -117,5 +118,10 @@ class Dqn():
         
     def score(self):
         return sum(self.reward_window)/(len(self.reward_window)+1)         #+1 to avoid 'dividing by 0' 
+    
+    def save(self):                                                        #to save the brain we need to save the state and weights only
+        torch.save({'state_dict': self.model.state_dict(),
+                    'optimizer' : self.optimizer.state_dict(),             #since weights are associated with optimizer
+                   }, 'saved_brain.pth')                                    #file name in which the last brain will be stored 
     
     
