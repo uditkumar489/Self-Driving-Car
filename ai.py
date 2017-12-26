@@ -74,6 +74,7 @@ class ReplayMemory(object):
    #4. update()         - to update everything as the AI reaches new state + return new action
    #5. score()          - to calculate the mean of award window
    #6. save()           - to save the state of brain
+   #7. load()           - to load the last saved brain
 
 class Dqn():
     
@@ -104,7 +105,7 @@ class Dqn():
     def update(self, reward, new_signal):                                   #to update last & new state , last action and reward
         new_state = torch.Tensor(new_signal).float().unsqueeze(0)
         self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward])))
-        action = self.select_action(new_state)                             #performing new action
+        action = self.select_action(new_state)                              #performing new action
         if len(self.memory.memory) > 100:
             batch_state, batch_next_state, batch_action, batch_reward = self.memory.sample(100)
             self.learn(batch_state, batch_next_state, batch_reward, batch_action)
@@ -117,11 +118,19 @@ class Dqn():
         return action                                                       #returning the new action performed
         
     def score(self):
-        return sum(self.reward_window)/(len(self.reward_window)+1)         #+1 to avoid 'dividing by 0' 
+        return sum(self.reward_window)/(len(self.reward_window)+1)          #+1 to avoid 'dividing by 0' 
     
-    def save(self):                                                        #to save the brain we need to save the state and weights only
-        torch.save({'state_dict': self.model.state_dict(),
-                    'optimizer' : self.optimizer.state_dict(),             #since weights are associated with optimizer
+    def save(self):                                                         #to save the brain we need to save the state and weights only
+        torch.save({'state_dict': self.model.state_dict(),                  #here we are using Python-dictionary saving technique
+                    'optimizer' : self.optimizer.state_dict(),              #since weights are associated with optimizer
                    }, 'saved_brain.pth')                                    #file name in which the last brain will be stored 
     
-    
+    def load(self):
+        if os.path.isfile('saved_brain.pth'):                               #checking if the last brain file exists
+            print("=> loading last brain state... ")
+            lastBrain = torch.load('saved_brain.pth')                       #variabale to load the filedata
+            self.model.load_state_dict(lastBrain['state_dict'])             #loading corresponding values to the keys (here to 'state_dict')
+            self.optimizer.load_state_dict(lastBrain['optimizer'])
+            print("And it's done !")
+        else:
+            print("no last brain found...")
