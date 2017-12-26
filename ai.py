@@ -42,10 +42,19 @@ class Network(nn.Module):
         return q_values
     
 
-# Implementing Experience Replay i.e. to store certain transitions / events for experience
+
+#AIM_2 -> To Implement Experience Replay i.e. to store certain transitions / events for experience
+  #Exp_Rep class will have 3 funcs() :
+  #1. init func()      - to declare class variables 
+  #2. push func()      - to append memory + make sure memory never exceeed 'capacity'       
 
 class ReplayMemory(object):
     
-    def __init__(self, capacity):    #capacity = num of events to be stored
+    def __init__(self, capacity):               #capacity = num of events to be stored
         self.capacity = capacity
         self.memory = []
+        
+    def push(self, event):                      #event will have a format of 4 touples - last & next state , last action , last reward 
+        self.memory.append(event)               #to apped the memory with events
+        if len(self.memory) > self.capacity:    #deleting the 1st event from memoery whenever new event attempts in memory
+            del self.memory[0]
