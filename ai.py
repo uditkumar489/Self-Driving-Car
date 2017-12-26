@@ -74,8 +74,8 @@ class Dqn():
     
     def __init__(self, input_size, nb_action, gamma):                      #to apply stochastic gradient descent
         self.gamma = gamma
-        self.reward_window = []
-        self.model = Network(input_size, nb_action)
+        self.reward_window = []                                           #contains list of rewads for a time-interval
+        self.model = Network(input_size, nb_action)                        #making object of neural class
         self.memory = ReplayMemory(100000)                                 #memory self-assumed
         self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001)   #creartin optimizer (ADAM in this case)
         self.last_state = torch.Tensor(input_size).unsqueeze(0)
