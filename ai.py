@@ -35,10 +35,10 @@ class Network(nn.Module):
         self.fc1 = nn.Linear(input_size, 30)    #full connection b/w i/p and hidden layer
         self.fc2 = nn.Linear(30, nb_action)     #full connection b/w hidden and o/p layer
         
-        
-    def forward(self, state):        #ofcourse , states are the inputs of our NN
-        x = F.relu(self.fc1(state))  #activating hidden_layer neurons
-        q_values = self.fc2(x)       #activating o/p neurons
+
+    def forward(self, state):                   #ofcourse , states are the inputs of our NN
+        x = F.relu(self.fc1(state))             #activating hidden_layer neurons
+        q_values = self.fc2(x)                  #activating o/p neurons
         return q_values
     
 
