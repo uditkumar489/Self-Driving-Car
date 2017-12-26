@@ -68,9 +68,10 @@ class ReplayMemory(object):
     
 #AIM_3 -> To Implement Deep Q Learning
    #Deep_q_Net class will have 5 functions() :
-   #1. init func()           - to declare variables and define class structure
-   #2. select_action func()  - to selct which action to perform next
-   #3. learn func()          - to backpropagate errors and update the weights
+   #1. init()           - to declare variables and define class structure
+   #2. select_action()  - to selct which action to perform next
+   #3. learn()          - to backpropagate errors and update the weights
+   #4. update()         - to update everything as the AI reaches new state
 
 class Dqn():
     
@@ -97,3 +98,8 @@ class Dqn():
         self.optimizer.zero_grad()                                          #this will re-initialize the optimizer
         td_loss.backward(retain_variables = True)                           #this will backpropagate the loss
         self.optimizer.step()                                               #this will update the weights
+        
+    def update(self, reward, new_signal):                                   #to update last & new state , last action and reward
+        new_state = torch.Tensor(new_signal).float().unsqueeze(0)
+        self.memory.push((self.last_state, new_state, torch.LongTensor([int(self.last_action)]), torch.Tensor([self.last_reward])))
+        
