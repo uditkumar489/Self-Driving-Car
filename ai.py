@@ -46,7 +46,8 @@ class Network(nn.Module):
 #AIM_2 -> To Implement Experience Replay i.e. to store certain transitions / events for experience
   #Exp_Rep class will have 3 funcs() :
   #1. init func()      - to declare class variables 
-  #2. push func()      - to append memory + make sure memory never exceeed 'capacity'       
+  #2. push func()      - to append memory + make sure memory never exceeed 'capacity'  
+  #3. sample func()    - to take random samples of events from the memory     
 
 class ReplayMemory(object):
     
@@ -54,7 +55,11 @@ class ReplayMemory(object):
         self.capacity = capacity
         self.memory = []
         
-    def push(self, event):                      #event will have a format of 4 touples - last & next state , last action , last reward 
+    def push(self, event):                      #event will have a format of a touple wid 4 eles - last & next state , last action , last reward 
         self.memory.append(event)               #to apped the memory with events
         if len(self.memory) > self.capacity:    #deleting the 1st event from memoery whenever new event attempts in memory
             del self.memory[0]
+            
+    def sample(self, batch_size):               #batch_size = size of sample
+        samples = zip(*random.sample(self.memory, batch_size))
+        return map(lambda x: Variable(torch.cat(x, 0)), samples)
