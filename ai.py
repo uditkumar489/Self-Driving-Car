@@ -60,6 +60,24 @@ class ReplayMemory(object):
         if len(self.memory) > self.capacity:    #deleting the 1st event from memoery whenever new event attempts in memory
             del self.memory[0]
             
-    def sample(self, batch_size):               #batch_size = size of sample
+    def sample(self, batch_size):               #batch_size = size of sample (explanation in README.md)
         samples = zip(*random.sample(self.memory, batch_size))
         return map(lambda x: Variable(torch.cat(x, 0)), samples)
+    
+    
+    
+#AIM_3 -> To Implement Deep Q Learning
+   #Deep_q_Net class will have 5 functions() :
+   #1. init func()       - to declare variables and define class structure
+
+class Dqn():
+    
+    def __init__(self, input_size, nb_action, gamma):                      #to apply stochastic gradient descent
+        self.gamma = gamma
+        self.reward_window = []
+        self.model = Network(input_size, nb_action)
+        self.memory = ReplayMemory(100000)                                 #memory self-assumed
+        self.optimizer = optim.Adam(self.model.parameters(), lr = 0.001)   #creartin optimizer (ADAM in this case)
+        self.last_state = torch.Tensor(input_size).unsqueeze(0)
+        self.last_action = 0                                               #action can have values 0,1,2 corrsp rotation
+        self.last_reward = 0                                               #reward can have values 0,+1,-1
