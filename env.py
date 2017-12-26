@@ -200,3 +200,43 @@ class MyPaintWidget(Widget):
             sand[int(touch.x) - 10 : int(touch.x) + 10, int(touch.y) - 10 : int(touch.y) + 10] = 1
             last_x = x
             last_y = y
+            
+# Adding the API Buttons (clear, save and load)
+
+class CarApp(App):
+
+    def build(self):
+        parent = Game()
+        parent.serve_car()
+        Clock.schedule_interval(parent.update, 1.0/60.0)
+        self.painter = MyPaintWidget()
+        clearbtn = Button(text = 'clear')
+        savebtn = Button(text = 'save', pos = (parent.width, 0))
+        loadbtn = Button(text = 'load', pos = (2 * parent.width, 0))
+        clearbtn.bind(on_release = self.clear_canvas)
+        savebtn.bind(on_release = self.save)
+        loadbtn.bind(on_release = self.load)
+        parent.add_widget(self.painter)
+        parent.add_widget(clearbtn)
+        parent.add_widget(savebtn)
+        parent.add_widget(loadbtn)
+        return parent
+
+    def clear_canvas(self, obj):
+        global sand
+        self.painter.canvas.clear()
+        sand = np.zeros((longueur,largeur))
+
+    def save(self, obj):
+        print("saving brain...")
+        brain.save()
+        plt.plot(scores)
+        plt.show()
+
+    def load(self, obj):
+        print("loading last saved brain...")
+        brain.load()
+
+# Running the whole thing
+if __name__ == '__main__':
+    CarApp().run()
