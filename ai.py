@@ -27,7 +27,7 @@ from torch.autograd import Variable  #to convert tensors into variables and grad
  
 class Network(nn.Module):
     
-    def __init__(self, input_size, nb_action):  #'special' syntax to define structure
+    def __init__(self, input_size, nb_action):  #'python' syntax to define class variables
         super(Network, self).__init__()         #trick to inherit all the properties of "nn.Module" in single shot
         self.input_size = input_size            #self.input_size is just a way to attact a variable to the input layer of neuralN. 
         #Note : above line signifies no. of input neuron = input size (in this case i.e 5)
@@ -40,3 +40,12 @@ class Network(nn.Module):
         x = F.relu(self.fc1(state))  #activating hidden_layer neurons
         q_values = self.fc2(x)       #activating o/p neurons
         return q_values
+    
+
+# Implementing Experience Replay i.e. to store certain transitions / events for experience
+
+class ReplayMemory(object):
+    
+    def __init__(self, capacity):    #capacity = num of events to be stored
+        self.capacity = capacity
+        self.memory = []
